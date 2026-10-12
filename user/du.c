@@ -75,15 +75,16 @@ uint64 du(char* name, int len) {
             // inactive
             if (de.inum == 0) continue;
 
-            int name_len = 0;
+
             char* nameptr = de.name;
             while (1) {
-                if (name_len == DIRSIZ) break;
+                if ((nameptr - de.name) == DIRSIZ) break;
                 if (*nameptr == 0) break;
 
                 nameptr++;
-                name_len++;
             }
+
+            int name_len = nameptr - de.name;
 
             // skip . and ..
             if (
