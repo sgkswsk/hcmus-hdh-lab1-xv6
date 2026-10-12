@@ -116,7 +116,7 @@ uint64 du(char* name, int len) {
 
 int main(int argc, char **argv) {
     if (argc < 2 || 3 < argc) {
-        fprintf(STDERR, "usage: du [path] [-a/-s]");
+        fprintf(STDERR, "usage: du [path] [-a/-s]\n");
         exit(0);
     }
 
