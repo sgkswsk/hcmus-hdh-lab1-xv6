@@ -192,6 +192,7 @@ UPROGS=\
 	$U/_rm\
 	$U/_sh\
 	$U/_stressfs\
+        $U/_tree\
 	$U/_usertests\
 	$U/_grind\
 	$U/_wc\
