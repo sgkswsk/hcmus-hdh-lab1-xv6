@@ -1,11 +1,11 @@
 #include "kernel/param.h"
 #include "kernel/types.h"
-#include "kernel/defs.h"
 #include "kernel/fcntl.h"
 #include "kernel/stat.h"
 #include "kernel/fs.h"
 #include "user/user.h"
 
+#define NULL 0
 #define STDERR 2
 
 #define MODE_DEFAULT 0
@@ -36,7 +36,7 @@ uint64 du(char* name, int len) {
     // open directory
     memmove(pathbuf + top, name, len);
     top += len;
-    pathbuf[top++] = 0;
+    pathbuf[top] = 0;
 
     int fd = open(pathbuf, O_RDONLY);
     if (fd < 0) {
