@@ -1,3 +1,4 @@
+#include "kernel/types.h"
 #include "user/user.h"
 #include "kernel/stat.h"
 #include "kernel/fcntl.h"
@@ -31,14 +32,12 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    // check dst stat first to perform identity check before opening dst
+    // check dst stat first to perform identity check before opening dst.
+    // stat() fails when dst does not exist yet, which is the normal case for
+    // cp: there is no inode to collide with, so just fall through and create it.
     struct stat dst_stat;
-    if (stat(argv[2], &dst_stat) < 0) {
-        fprintf(STDERR, "cp: cannot stat %s\n", argv[2]);
-        close(src);
-        exit(1);
-    }
     if (
+        stat(argv[2], &dst_stat) == 0 &&
         src_stat.dev == dst_stat.dev &&
         src_stat.ino == dst_stat.ino
     ) {
