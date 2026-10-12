@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) {
 
     // Dong dau ghi de bao hieu het du lieu
     close(p[WRITE_END]);
-
+  
     // Cho toan bo pipeline ket thuc
     wait(0);
 
