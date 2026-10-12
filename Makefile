@@ -181,6 +181,7 @@ UPROGS=\
 	$U/_cat\
         $U/_cp\
 	$U/_diff\
+		$U/_du\
 	$U/_echo\
 	$U/_forktest\
 	$U/_grep\
