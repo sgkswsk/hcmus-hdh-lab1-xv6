@@ -139,6 +139,24 @@ void tree(char *path, int level, int maxDepth, int onlyDir, int last[]) {
   close(fd);
 }
 
+// Doc mot so nguyen khong am tu chuoi. Tra ve -1 neu chuoi rong hoac co ky tu
+// khong phai chu so. Khong dung atoi vi atoi dung o ky tu sai dau tien va tra
+// ve phan da doc duoc, nen "abc" va "-3" deu cho 0 ma khong bao loi.
+int parse_depth(char *s) {
+  int ket_qua = 0;
+  int i;
+
+  if (s[0] == '\0') return -1;
+
+  for (i = 0; s[i] != '\0'; i++) {
+    if (s[i] < '0' || s[i] > '9') return -1;
+    ket_qua = ket_qua * 10 + (s[i] - '0');
+    if (ket_qua >= 128) return -1;      // vuot kich thuoc mang last[]
+  }
+
+  return ket_qua;
+}
+
 int main(int argc, char *argv[]) {
   char *path = ".";
   int maxDepth = -1;
@@ -148,19 +166,20 @@ int main(int argc, char *argv[]) {
   int last[128];
   struct stat st;
   int fd;
+  int duongDanDaCo = 0;
 
   // Phan tich cac tham so dong lenh
   for (i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-d") == 0) onlyDir = 1;
     else if (strcmp(argv[i], "-L") == 0) {
       if (i + 1 >= argc) {
-        fprintf(2, "Usage: tree [path] [-L depth] [-d]\n");
+        fprintf(2, "usage: tree [path] [-L depth] [-d]\n");
         exit(1);
       }
 
-      depth = atoi(argv[++i]);
-      if (depth < 0 || depth >= 128) {
-        fprintf(2, "tree: invalid depth\n");
+      depth = parse_depth(argv[++i]);
+      if (depth < 0) {
+        fprintf(2, "tree: invalid depth %s\n", argv[i]);
         exit(1);
       }
 
@@ -168,11 +187,19 @@ int main(int argc, char *argv[]) {
     }
 
     else if (argv[i][0] == '-') {
-      fprintf(2, "Usage: tree [path] [-L depth] [-d]\n");
+      fprintf(2, "usage: tree [path] [-L depth] [-d]\n");
       exit(1);
     }
 
-    else path = argv[i];
+    else if (duongDanDaCo) {
+      fprintf(2, "usage: tree [path] [-L depth] [-d]\n");
+      exit(1);
+    }
+
+    else {
+      path = argv[i];
+      duongDanDaCo = 1;
+    }
   }
 
   // Kiem tra duong dan dau vao
