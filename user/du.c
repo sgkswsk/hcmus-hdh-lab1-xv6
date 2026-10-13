@@ -115,33 +115,36 @@ uint64 du(char* name, int len) {
 }
 
 int main(int argc, char **argv) {
-    if (argc < 2 || 3 < argc) {
-        fprintf(STDERR, "usage: du [path] [-a/-s]\n");
-        exit(0);
-    }
-
     char *path = NULL;
     for (int i = 1; i < argc; i++) {
         if (argv[i][0] == '-') {
-            if (argv[i][1] == 's') mode = MODE_SUMMARY;
-            if (argv[i][1] == 'a') mode = MODE_ALL;
-
-            // unchanged == unknown flag, longer than 1 character is also unknown
-            if (mode == MODE_DEFAULT || argv[i][2] != 0) {
+            // Xet thang ky tu co, khong suy ra tu bien mode: neu suy ra thi
+            // "du . -a -z" se lot vi mode da khac MODE_DEFAULT tu co truoc.
+            if (argv[i][2] != 0) {
                 fprintf(STDERR, "du: unknown flag %s\n", argv[i]);
                 exit(0);
             }
-            
+
+            if (argv[i][1] == 's') mode = MODE_SUMMARY;
+            else if (argv[i][1] == 'a') mode = MODE_ALL;
+            else {
+                fprintf(STDERR, "du: unknown flag %s\n", argv[i]);
+                exit(0);
+            }
+
             continue;
+        }
+
+        if (path != NULL) {
+            fprintf(STDERR, "usage: du [path] [-a] [-s]\n");
+            exit(0);
         }
 
         path = argv[i];
     }
 
-    if (path == NULL) {
-        fprintf(STDERR, "du: no path supplied\n");
-        exit(0);
-    }
+    // De quy dinh duong dan mac dinh la thu muc hien hanh.
+    if (path == NULL) path = ".";
 
     int plen = 0;
     while (path[plen] != 0) plen++;
